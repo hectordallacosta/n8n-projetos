@@ -1,5 +1,5 @@
 # 🚀 Automação de Contratos - GETIC
-Este workflow automatiza o processo de [descrição curta].
+Este workflow automatiza o processo de aviso via e-mails para contratos que estão prestes a expirar no período de 1 mês.
 
 ## 📊 Visualização do Fluxo
 ![Thumbnail do Fluxo](images/workflow-screenshot.png)
