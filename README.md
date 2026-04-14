@@ -1,5 +1,4 @@
-# 🚀 Automação de [Nome do Projeto]
-
+# 🚀 Automação de Contratos - GETIC
 Este workflow automatiza o processo de [descrição curta].
 
 ## 📊 Visualização do Fluxo
