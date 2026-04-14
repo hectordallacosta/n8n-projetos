@@ -1,0 +1,225 @@
+{
+  "name": "Contratos SEA",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "102ifrAZNrkclo_yxIpq_HR2ZadZk_MdKCfUR41VGh-Y",
+          "mode": "list",
+          "cachedResultName": "Contratos GETIC",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/102ifrAZNrkclo_yxIpq_HR2ZadZk_MdKCfUR41VGh-Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2084050358,
+          "mode": "list",
+          "cachedResultName": "SEA-FMPIO-FPS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/102ifrAZNrkclo_yxIpq_HR2ZadZk_MdKCfUR41VGh-Y/edit#gid=2084050358"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -512,
+        -176
+      ],
+      "id": "adb2f26a-4977-4f8f-9de8-2645810d5145",
+      "name": "Linhas da tabela",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T7FHPXcm7oIoS6jA",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c221ec51-305f-4e22-9bff-6f75f8d4becf",
+              "leftValue": "={{ $json.VENCIMENTO.split('/').reverse().join('-') }}",
+              "rightValue": "={{ $now.plus({ days: 30 }).toISODate() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "beforeOrEquals"
+              }
+            },
+            {
+              "id": "321eca0c-4bd9-47e1-a48e-f8d4d768121e",
+              "leftValue": "={{ $json.VENCIMENTO.split('/').reverse().join('-') }}\n",
+              "rightValue": "={{ $now.toISODate() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -128,
+        -176
+      ],
+      "id": "34eafe07-db97-480d-a9ab-b1605a41468f",
+      "name": "Filtro de condição"
+    },
+    {
+      "parameters": {
+        "sendTo": "cristina.martins@sea.sc.gov.br",
+        "subject": "Vencimento de Contrato",
+        "message": "=<h3>⚠️ Alerta de Vencimento de Contrato</h3>\nOlá,<br><br>\nInformamos que o contrato abaixo está próximo do vencimento (janela de 30 dias):<br><br>\n<b>Empresa:</b>&nbsp;{{ $json.EMPRESA }}<br>\n<b>Processo:</b>&nbsp;{{ $json.PROCESSO }}<br>\n<b>Data de Vencimento:</b>&nbsp;{{ $json.VENCIMENTO }}<br><br>\nFavor tomar as providências necessárias.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        80,
+        -176
+      ],
+      "id": "74dca10e-9761-4a65-9114-107af1ac5606",
+      "name": "Envio de E-mail",
+      "webhookId": "ec165579-45bc-41a2-b1fc-cdfd72c347ac",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Aamxq71zWDzyrwPH",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eff9cc61-6f35-422a-b0a7-feac9e49818e",
+              "name": "PROCESSO",
+              "value": "={{ $json.PROCESSO }}",
+              "type": "string"
+            },
+            {
+              "id": "5bc9833f-ea58-4753-81c3-94ff8e01b048",
+              "name": "EMPRESA",
+              "value": "={{ $json.EMPRESA }}",
+              "type": "string"
+            },
+            {
+              "id": "ff7c96f7-888d-40ed-9cda-cf8ab731ba2d",
+              "name": "VENCIMENTO",
+              "value": "={{ $json.VENCIMENTO }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        -176
+      ],
+      "id": "c8d41905-aa00-408d-872e-4993a1ef9e70",
+      "name": "Predefinir campos"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -704,
+        -176
+      ],
+      "id": "dab56eb3-d781-45a0-a3f8-a82027e391d5",
+      "name": "Trigger de Disparo diário "
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Linhas da tabela": {
+      "main": [
+        [
+          {
+            "node": "Predefinir campos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro de condição": {
+      "main": [
+        [
+          {
+            "node": "Envio de E-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Predefinir campos": {
+      "main": [
+        [
+          {
+            "node": "Filtro de condição",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger de Disparo diário ": {
+      "main": [
+        [
+          {
+            "node": "Linhas da tabela",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "0a4eede7-43f2-4663-90e3-2b14444edef5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "86ea9ce42a887c7fbe6b5de74b83dc2c3f299ab73d045530f7f3f3e710c2315d"
+  },
+  "id": "qdz2AcNLHJuhRaUv",
+  "tags": [
+    {
+      "updatedAt": "2026-04-14T13:18:33.815Z",
+      "createdAt": "2026-04-14T13:18:33.815Z",
+      "id": "jYw98E1bIf5AbRBs",
+      "name": "GETIC"
+    }
+  ]
+}
